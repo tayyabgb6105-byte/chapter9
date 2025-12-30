@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 9: The French Revolution Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #2a004a;
+            --primary: #4a1e6e;
+            --primary-light: #6b3d8c;
+            --accent: #9c6bc7;
+            --text-light: #f0e6ff;
+            --text-muted: #d4c4ed;
+            --correct: #2196f3;
+            --incorrect: #a52a2a;
+            --background: #0f001f;
+            --card-bg: #1a0a2e;
+            --border: #3d1b5c;
+            --shadow: rgba(42, 0, 74, 0.5);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header and Timer */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            padding: 20px;
+            border-bottom: 3px solid var(--accent);
+            box-shadow: 0 4px 12px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .title-section h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .title-section p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .timer-container {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 12px 20px;
+            min-width: 180px;
+            text-align: center;
+            border: 2px solid var(--accent);
+        }
+        
+        .timer-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+        
+        #timer {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .timer-warning {
+            color: #ff9e00;
+        }
+        
+        .timer-danger {
+            color: #ff5252;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        /* Quiz Content */
+        .quiz-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .info-card {
+            flex: 1;
+            min-width: 300px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 16px var(--shadow);
+            border-left: 5px solid var(--accent);
+        }
+        
+        .info-card h2 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-card h2 i {
+            font-size: 1.3rem;
+        }
+        
+        .info-card ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card li {
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+        
+        .quiz-container {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .question-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 16px var(--shadow);
+            border: 1px solid var(--border);
+        }
+        
+        .question-number {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .option {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            border-color: var(--accent);
+            background-color: rgba(156, 107, 199, 0.1);
+        }
+        
+        .option input {
+            margin-top: 3px;
+        }
+        
+        .option-label {
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .option-text {
+            flex: 1;
+        }
+        
+        /* Results Section */
+        .results-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .results-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 16px var(--shadow);
+            text-align: center;
+            border-top: 5px solid var(--accent);
+        }
+        
+        .results-header {
+            margin-bottom: 25px;
+        }
+        
+        .results-header h2 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .score-display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: white;
+            margin: 20px 0;
+        }
+        
+        .score-text {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        
+        .answer-review {
+            text-align: left;
+            margin-top: 30px;
+        }
+        
+        .review-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--border);
+        }
+        
+        .review-item.correct {
+            border-left-color: var(--correct);
+        }
+        
+        .review-item.incorrect {
+            border-left-color: var(--incorrect);
+        }
+        
+        .review-question {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: white;
+        }
+        
+        .review-answer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .correct-answer {
+            color: var(--correct);
+        }
+        
+        .incorrect-answer {
+            color: var(--incorrect);
+        }
+        
+        .fa-check-circle {
+            color: var(--correct);
+        }
+        
+        .fa-times-circle {
+            color: var(--incorrect);
+        }
+        
+        /* Buttons */
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .timer-container {
+                align-self: stretch;
+                text-align: left;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .info-card, .question-card, .results-card {
+                padding: 20px;
+            }
+            
+            .title-section h1 {
+                font-size: 1.5rem;
+            }
+            
+            .score-display {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="title-section">
+                    <h1><i class="fas fa-landmark"></i> The French Revolution - Class 9</h1>
+                    <p>Test your knowledge with this 20-question quiz. You have 20 minutes to complete it.</p>
+                </div>
+                <div class="timer-container">
+                    <div class="timer-label">Time Remaining</div>
+                    <div id="timer">20:00</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="quiz-content">
+            <div class="info-card">
+                <h2><i class="fas fa-info-circle"></i> About The French Revolution</h2>
+                <p>The French Revolution (1789-1799) was a period of radical social and political upheaval in France that profoundly affected French and modern history.</p>
+                
+                <h2><i class="fas fa-lightbulb"></i> Key Concepts</h2>
+                <ul>
+                    <li>Estates General & National Assembly</li>
+                    <li>Storming of the Bastille</li>
+                    <li>Declaration of the Rights of Man</li>
+                    <li>Reign of Terror</li>
+                    <li>Rise of Napoleon Bonaparte</li>
+                </ul>
+                
+                <h2><i class="fas fa-tasks"></i> Quiz Instructions</h2>
+                <ul>
+                    <li>20 Multiple Choice Questions</li>
+                    <li>20 Minutes Time Limit</li>
+                    <li>Auto-submits when time expires</li>
+                    <li>Correct answers: Blue tick</li>
+                    <li>Wrong answers: Maroon color</li>
+                </ul>
+            </div>
+            
+            <div class="quiz-container" id="quiz-container">
+                <!-- Questions will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-secondary" id="prev-btn">
+                <i class="fas fa-arrow-left"></i> Previous Question
+            </button>
+            <div>
+                <span id="question-counter">Question 1 of 20</span>
+            </div>
+            <button class="btn btn-primary" id="next-btn">
+                Next Question <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-primary" id="submit-btn" style="width: 100%;">
+                <i class="fas fa-paper-plane"></i> Submit Quiz
+            </button>
+        </div>
+        
+        <div class="results-section" id="results-section">
+            <div class="results-card">
+                <div class="results-header">
+                    <h2><i class="fas fa-poll"></i> Quiz Results</h2>
+                    <p>Your French Revolution Quiz Score</p>
+                </div>
+                
+                <div class="score-display" id="score-display">0/20</div>
+                <div class="score-text" id="score-text"></div>
+                
+                <div class="answer-review" id="answer-review">
+                    <!-- Answer review will be inserted here -->
+                </div>
+                
+                <button class="btn btn-secondary" id="retry-btn" style="margin-top: 20px;">
+                    <i class="fas fa-redo"></i> Try Again
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>Class 9 History | The French Revolution Quiz | Created for Educational Purposes</p>
+            <p>© 2023 History Education. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Quiz data - 20 questions about French Revolution
+        const quizData = [
+            {
+                question: "When did the French Revolution begin?",
+                options: ["1776", "1789", "1799", "1815"],
+                correct: 1
+            },
+            {
+                question: "Which estate comprised the clergy in pre-revolutionary France?",
+                options: ["First Estate", "Second Estate", "Third Estate", "Fourth Estate"],
+                correct: 0
+            },
+            {
+                question: "What was the name of the prison stormed on July 14, 1789?",
+                options: ["The Louvre", "The Tuileries", "The Bastille", "Versailles"],
+                correct: 2
+            },
+            {
+                question: "Who was the king of France at the start of the French Revolution?",
+                options: ["Louis XIV", "Louis XV", "Louis XVI", "Napoleon Bonaparte"],
+                correct: 2
+            },
+            {
+                question: "Which document proclaimed the rights of French citizens in 1789?",
+                options: ["Magna Carta", "Declaration of Independence", "Declaration of the Rights of Man and Citizen", "Code Napoleon"],
+                correct: 2
+            },
+            {
+                question: "What was the name of the revolutionary government established in 1792?",
+                options: ["Directory", "National Convention", "Committee of Public Safety", "First Republic"],
+                correct: 1
+            },
+            {
+                question: "Who was the radical leader of the Jacobins during the Reign of Terror?",
+                options: ["Georges Danton", "Maximilien Robespierre", "Jean-Paul Marat", "Lafayette"],
+                correct: 1
+            },
+            {
+                question: "Which revolutionary device was used for executions?",
+                options: ["Guillotine", "Gallows", "Electric Chair", "Firing Squad"],
+                correct: 0
+            },
+            {
+                question: "What was the period of mass executions during the French Revolution called?",
+                options: ["Great Fear", "Reign of Terror", "September Massacres", "Jacobin Purge"],
+                correct: 1
+            },
+            {
+                question: "Which group made up the Third Estate?",
+                options: ["Clergy", "Nobility", "Commoners", "Royal Family"],
+                correct: 2
+            },
+            {
+                question: "What was the name of the women's march that forced the royal family to move to Paris?",
+                options: ["March of the Women", "October March", "Women's March on Versailles", "Parisian Women's Protest"],
+                correct: 2
+            },
+            {
+                question: "Which European country did France declare war on in 1792?",
+                options: ["Britain", "Russia", "Austria", "Spain"],
+                correct: 2
+            },
+            {
+                question: "What was the name of the five-member government that ruled France after the Reign of Terror?",
+                options: ["National Assembly", "Committee of Public Safety", "Directory", "Consulate"],
+                correct: 2
+            },
+            {
+                question: "Which revolutionary leader was assassinated in his bath?",
+                options: ["Robespierre", "Danton", "Marat", "Saint-Just"],
+                correct: 2
+            },
+            {
+                question: "Who became the ruler of France after the French Revolution?",
+                options: ["Louis XVIII", "Napoleon Bonaparte", "Josephine de Beauharnais", "Talleyrand"],
+                correct: 1
+            },
+            {
+                question: "What was the name of the radical political club during the Revolution?",
+                options: ["Girondins", "Jacobins", "Cordeliers", "Sans-culottes"],
+                correct: 1
+            },
+            {
+                question: "Which European country was the first to go to war with revolutionary France?",
+                options: ["Britain", "Prussia", "Austria", "Russia"],
+                correct: 2
+            },
+            {
+                question: "What was the slogan of the French Revolution?",
+                options: ["Peace, Land, and Bread", "Life, Liberty, and Property", "Liberty, Equality, Fraternity", "Unity, Justice, and Freedom"],
+                correct: 2
+            },
+            {
+                question: "Which estate was exempt from paying taxes in pre-revolutionary France?",
+                options: ["First Estate only", "Second Estate only", "First and Second Estates", "Third Estate"],
+                correct: 2
+            },
+            {
+                question: "What was the name of the new calendar introduced during the Revolution?",
+                options: ["Republican Calendar", "Revolutionary Calendar", "French Republican Calendar", "All of the above"],
+                correct: 3
+            }
+        ];
+
+        // DOM Elements
+        const quizContainer = document.getElementById('quiz-container');
+        const timerElement = document.getElementById('timer');
+        const questionCounter = document.getElementById('question-counter');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultsSection = document.getElementById('results-section');
+        const scoreDisplay = document.getElementById('score-display');
+        const scoreText = document.getElementById('score-text');
+        const answerReview = document.getElementById('answer-review');
+        const retryBtn = document.getElementById('retry-btn');
+
+        // Quiz state variables
+        let currentQuestion = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let timeLeft = 20 * 60; // 20 minutes in seconds
+        let timerInterval;
+        let quizSubmitted = false;
+
+        // Initialize the quiz
+        function initQuiz() {
+            displayQuestion(currentQuestion);
+            updateQuestionCounter();
+            startTimer();
+            
+            // Event listeners
+            prevBtn.addEventListener('click', showPreviousQuestion);
+            nextBtn.addEventListener('click', showNextQuestion);
+            submitBtn.addEventListener('click', submitQuiz);
+            retryBtn.addEventListener('click', retryQuiz);
+        }
+
+        // Display a question
+        function displayQuestion(index) {
+            const question = quizData[index];
+            
+            let optionsHTML = '';
+            question.options.forEach((option, optionIndex) => {
+                const isSelected = userAnswers[index] === optionIndex;
+                optionsHTML += `
+                    <div class="option ${isSelected ? 'selected' : ''}" data-index="${optionIndex}">
+                        <input type="radio" name="question-${index}" id="option-${index}-${optionIndex}" 
+                               ${isSelected ? 'checked' : ''}>
+                        <div class="option-label">${String.fromCharCode(65 + optionIndex)}</div>
+                        <div class="option-text">${option}</div>
+                    </div>
+                `;
+            });
+            
+            quizContainer.innerHTML = `
+                <div class="question-card">
+                    <div class="question-number">Question ${index + 1}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options-container">
+                        ${optionsHTML}
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners to options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    if (quizSubmitted) return;
+                    
+                    const optionIndex = parseInt(this.getAttribute('data-index'));
+                    userAnswers[currentQuestion] = optionIndex;
+                    
+                    // Update UI
+                    document.querySelectorAll('.option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    // Update the radio button
+                    const radioBtn = this.querySelector('input');
+                    radioBtn.checked = true;
+                });
+            });
+            
+            // Update button states
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === quizData.length - 1;
+        }
+
+        // Update question counter
+        function updateQuestionCounter() {
+            questionCounter.textContent = `Question ${currentQuestion + 1} of ${quizData.length}`;
+        }
+
+        // Show previous question
+        function showPreviousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion(currentQuestion);
+                updateQuestionCounter();
+            }
+        }
+
+        // Show next question
+        function showNextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                displayQuestion(currentQuestion);
+                updateQuestionCounter();
+            }
+        }
+
+        // Timer functions
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            timerElement.textContent = formattedTime;
+            
+            // Add warning classes for low time
+            timerElement.classList.remove('timer-warning', 'timer-danger');
+            if (timeLeft <= 5 * 60) { // 5 minutes left
+                timerElement.classList.add('timer-warning');
+            }
+            if (timeLeft <= 60) { // 1 minute left
+                timerElement.classList.add('timer-danger');
+            }
+        }
+
+        // Submit quiz
+        function submitQuiz() {
+            if (quizSubmitted) return;
+            
+            quizSubmitted = true;
+            clearInterval(timerInterval);
+            
+            // Calculate score
+            let score = 0;
+            quizData.forEach((question, index) => {
+                if (userAnswers[index] === question.correct) {
+                    score++;
+                }
+            });
+            
+            // Display results
+            displayResults(score);
+            
+            // Hide quiz and show results
+            document.querySelector('.quiz-content').style.display = 'none';
+            document.querySelector('.button-group').style.display = 'none';
+            resultsSection.style.display = 'block';
+        }
+
+        // Display results
+        function displayResults(score) {
+            scoreDisplay.textContent = `${score}/${quizData.length}`;
+            
+            // Set score text based on performance
+            let performanceText = '';
+            if (score === quizData.length) {
+                performanceText = "Perfect! You're a French Revolution expert!";
+            } else if (score >= quizData.length * 0.8) {
+                performanceText = "Excellent! You have a strong understanding of the French Revolution.";
+            } else if (score >= quizData.length * 0.6) {
+                performanceText = "Good job! You know the basics of the French Revolution.";
+            } else if (score >= quizData.length * 0.4) {
+                performanceText = "Fair. You might want to review the French Revolution topics.";
+            } else {
+                performanceText = "Keep studying! The French Revolution is a complex topic worth understanding.";
+            }
+            
+            scoreText.textContent = performanceText;
+            
+            // Display answer review
+            let reviewHTML = '<h3>Answer Review</h3>';
+            quizData.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === question.correct;
+                
+                reviewHTML += `
+                    <div class="review-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="review-question">${index + 1}. ${question.question}</div>
+                        <div class="review-answer">
+                            ${isCorrect ? 
+                                `<i class="fas fa-check-circle"></i>` : 
+                                `<i class="fas fa-times-circle"></i>`
+                            }
+                            <span>Your answer: <span class="${isCorrect ? 'correct-answer' : 'incorrect-answer'}">
+                                ${userAnswer !== null ? question.options[userAnswer] : 'Not answered'}
+                            </span></span>
+                        </div>
+                        ${!isCorrect ? 
+                            `<div class="review-answer">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Correct answer: <span class="correct-answer">${question.options[question.correct]}</span></span>
+                            </div>` : ''
+                        }
+                    </div>
+                `;
+            });
+            
+            answerReview.innerHTML = reviewHTML;
+        }
+
+        // Retry quiz
+        function retryQuiz() {
+            // Reset quiz state
+            currentQuestion = 0;
+            userAnswers = new Array(quizData.length).fill(null);
+            timeLeft = 20 * 60;
+            quizSubmitted = false;
+            
+            // Show quiz and hide results
+            document.querySelector('.quiz-content').style.display = 'flex';
+            document.querySelector('.button-group').style.display = 'flex';
+            resultsSection.style.display = 'none';
+            
+            // Restart timer
+            clearInterval(timerInterval);
+            startTimer();
+            
+            // Display first question
+            displayQuestion(currentQuestion);
+            updateQuestionCounter();
+        }
+
+        // Initialize the quiz when page loads
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
